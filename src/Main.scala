@@ -47,7 +47,7 @@ class Body[M](var pos:Vec3, var rot:Quat, val mesh:M, val program:GLProgram) {
     rot = dq * rot
   }
 
-  def rotate(amount:Real) = {    
+/*  def rotate(amount:Real) = {    
     val theta = rotVel * (amount/2)
     val dq = if (theta.lengthSquared*theta.lengthSquared/24 < 1.0e-10) {
       Quat(1 - theta.lengthSquared/2, theta * (1.0 - theta.lengthSquared/6.0))
@@ -56,7 +56,7 @@ class Body[M](var pos:Vec3, var rot:Quat, val mesh:M, val program:GLProgram) {
     }
 
     rot = dq * rot
-  }
+  }*/
 
   // TODO: what exactly do these functions do?
   def drawMatrix = Matrix4.translate(pos) * rot.toMatrix
@@ -227,8 +227,8 @@ object Main extends InputHandler {
 
   val starDist = 1e+16
 
-  val useSmallTextures = false
-  val fullscreen = false
+  val useSmallTextures = true
+  val fullscreen = true
   val projRadius = 0.1
 
   val weaponCooldown = 0.5
@@ -391,17 +391,18 @@ object Main extends InputHandler {
 
       skyboxMesh.draw(you.rot.toMatrix, projMatrix, fcoef, fcoefHalf)
 
-      var walkDir = Vec3.zero
-      if (Key.A.pressed) walkDir += moveInDir(-1, Vec3.xAxis)
-      if (Key.D.pressed) walkDir += moveInDir(1,  Vec3.xAxis)
-      if (Key.W.pressed) walkDir += moveInDir(1,  Vec3.yAxis)
-      if (Key.S.pressed) walkDir += moveInDir(-1, Vec3.yAxis)
-      if (Key.Shift.pressed) walkDir += moveInDir(1, Vec3.zAxis)
-      if (Key.Ctrl.pressed) walkDir += moveInDir(-1, Vec3.zAxis)
+      var moveDir = Vec3.zero
+      if (Key.A.pressed) moveDir += moveInDir(-1, Vec3.xAxis)
+      if (Key.D.pressed) moveDir += moveInDir(1,  Vec3.xAxis)
+      if (Key.W.pressed) moveDir += moveInDir(1,  Vec3.yAxis)
+      if (Key.S.pressed) moveDir += moveInDir(-1, Vec3.yAxis)
+      if (Key.Shift.pressed) moveDir += moveInDir(1, Vec3.zAxis)
+      if (Key.Ctrl.pressed) moveDir += moveInDir(-1, Vec3.zAxis)
       if (Key.Q.pressed) you.rotVel += you.rot * Vec3(0, 0, keyRotSpeed*rotSpeed*dt)
       if (Key.E.pressed) you.rotVel += you.rot * Vec3(0, 0, -keyRotSpeed*rotSpeed*dt)
-      if (Key.T.pressed) earth.rotate(60*30*dt)
-      if (Key.G.pressed) earth.rotate(-60*30*dt)
+      // TODO: why doesn't this work?
+      /*if (Key.T.pressed) earth.rotate(60*30*dt)
+      if (Key.G.pressed) earth.rotate(-60*30*dt)*/
 
       cooldown -= dt
       if (Key.Space.pressed && cooldown <= 0) {
@@ -431,8 +432,8 @@ object Main extends InputHandler {
         println(round(fov))
       }
 
-      var walkDist = if (walkDir == Vec3.zero) Vec3.zero else walkDir.normalize * (flySpeed*dt)
-      you.vel += walkDist
+      var moveDist = if (moveDir == Vec3.zero) Vec3.zero else moveDir.normalize * (flySpeed*dt)
+      you.vel += moveDist
 
       def objects = Seq(you, objBody) ++ projs.toSeq
 

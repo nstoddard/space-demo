@@ -8,7 +8,7 @@ scalacOptions ++= Seq("-deprecation", "-feature")
 
 scalacOptions += "-optimise"
 
-javaOptions ++= Seq("-Xms256m", "-Xmx2000m") //, "-d64")
+javaOptions ++= Seq("-Xms256m", "-Xmx1000m") //, "-d64")
 
 seq(com.github.retronym.SbtOneJar.oneJarSettings: _*)
 
